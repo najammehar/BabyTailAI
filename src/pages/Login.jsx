@@ -1,0 +1,142 @@
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Mail, Lock } from "lucide-react";
+import { useAuth } from "../context/AuthContext";
+import { Alert, AlertDescription } from "../components/ui/Alert";
+
+const Login = () => {
+  const { login } = useAuth();
+  const navigate = useNavigate();
+  const [form, setForm] = useState({ email: "", password: "" });
+  const [errors, setErrors] = useState({});
+  const [submitError, setSubmitError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const validateForm = () => {
+    const newErrors = {};
+    
+    // Email validation
+    if (!form.email) {
+      newErrors.email = "Email is required";
+    } else if (!/\S+@\S+\.\S+/.test(form.email)) {
+      newErrors.email = "Please enter a valid email address";
+    }
+    
+    // Password validation
+    if (!form.password) {
+      newErrors.password = "Password is required";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setForm(prev => ({ ...prev, [name]: value }));
+    // Clear error when user starts typing
+    if (errors[name]) {
+      setErrors(prev => ({ ...prev, [name]: "" }));
+    }
+    setSubmitError("");
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    if (!validateForm()) return;
+    
+    setIsSubmitting(true);
+    setSubmitError("");
+
+    const result = await login(form.email, form.password);
+    
+    if (!result.success) {
+      setSubmitError(result.error);
+    }
+    
+    setIsSubmitting(false);
+  };
+
+  return (
+    <div className="flex items-center justify-center p-4">
+      <div className="w-full max-w-md">
+        <div>
+          <h2 className="text-2xl font-bold text-center text-gray-800 mb-8">
+            Welcome back
+          </h2>
+
+          {submitError && (
+            <Alert variant="destructive" className="mb-6">
+              <AlertDescription>{submitError}</AlertDescription>
+            </Alert>
+          )}
+
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="space-y-2">
+              <div className="relative">
+                <Mail className="absolute left-3 top-3 text-gray-400 w-5 h-5" />
+                <input
+                  type="email"
+                  name="email"
+                  placeholder="Email address"
+                  value={form.email}
+                  onChange={handleChange}
+                  className={`w-full pl-10 pr-4 py-3 border rounded-lg outline-none transition-all ${
+                    errors.email 
+                      ? 'border-red-500 focus:ring-red-500' 
+                      : 'border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500'
+                  }`}
+                />
+              </div>
+              {errors.email && (
+                <p className="text-sm text-red-500">{errors.email}</p>
+              )}
+            </div>
+
+            <div className="space-y-2">
+              <div className="relative">
+                <Lock className="absolute left-3 top-3 text-gray-400 w-5 h-5" />
+                <input
+                  type="password"
+                  name="password"
+                  placeholder="Your password"
+                  value={form.password}
+                  onChange={handleChange}
+                  className={`w-full pl-10 pr-4 py-3 border rounded-lg outline-none transition-all ${
+                    errors.password 
+                      ? 'border-red-500 focus:ring-red-500' 
+                      : 'border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500'
+                  }`}
+                />
+              </div>
+              {errors.password && (
+                <p className="text-sm text-red-500">{errors.password}</p>
+              )}
+            </div>
+
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="w-full py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isSubmitting ? "Logging in..." : "Log In"}
+            </button>
+          </form>
+
+          <p className="mt-8 text-center text-gray-600">
+            Don't have an account?{" "}
+            <span
+              onClick={() => navigate("/")}
+              className="text-green-600 hover:text-green-700 cursor-pointer font-medium"
+            >
+              Sign up
+            </span>
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Login;
