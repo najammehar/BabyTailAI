@@ -15,7 +15,7 @@ export const useMilestones = () => {
 
 export const MilestonesProvider = ({ children }) => {
     const [milestone, setMilestone] = useState(null);
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
     const { user } = useAuth();
 
     // Your database and collection IDs
@@ -25,6 +25,8 @@ export const MilestonesProvider = ({ children }) => {
     useEffect(() => {
         if (user) {
             getUserMilestone();
+        } else {
+            setMilestone(null);
         }
     }, [user]);
 
@@ -104,7 +106,7 @@ export const MilestonesProvider = ({ children }) => {
 
     return (
         <MilestonesContext.Provider value={value}>
-            {!loading && children}
+          {children}
         </MilestonesContext.Provider>
-    );
+      );
 };

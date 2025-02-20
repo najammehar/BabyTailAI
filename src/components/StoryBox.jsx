@@ -3,6 +3,7 @@ import React, { useEffect, useRef, useCallback } from 'react';
 import { useStory } from '../context/StoryContext';
 import { useChapters } from '../context/ChapterContext';
 import Div1 from './Div1';
+import { useAuth } from '../context/AuthContext';
 
 const getWordCount = (text) =>
   text
@@ -27,101 +28,125 @@ const StoryEditor = () => {
 
   const { chapters } = useChapters();
   const editorRef = useRef(null);
+  const { user } = useAuth();
 
-  const updateWordCount = useCallback((text) => {
-    const currentWordCount = getWordCount(text);
-    setWordCount(currentWordCount); // Update to show total word count
+    // Clear content when user logs out
+    useEffect(() => {
+      if (!user) {
+        if (editorRef.current) {
+          editorRef.current.innerText = '';
+        }
+        setWordCount(0);
+        setLastCheckpoint(0);
+        setCurrentChapterId(null);
+        setSuggestions({ suggestion1: '', suggestion2: '' });
+      }
+    }, [user, setWordCount, setLastCheckpoint, setCurrentChapterId, setSuggestions]);
 
-    // Check if we've reached a new 20-word milestone
-    const remainder = currentWordCount % 20;
-    const newCheckpoint = currentWordCount - remainder;
-    if (newCheckpoint > lastCheckpoint) {
-      setLastCheckpoint(newCheckpoint);
-      return true; // Indicates we've hit a new 20-word milestone
-    }
-    return false;
-  }, [setWordCount, setLastCheckpoint, lastCheckpoint]);
+    const checkWordCountMilestone = useCallback((currentCount, prevCount) => {
+      // Check if we've crossed a multiple of 20
+      const prevMilestone = Math.floor(prevCount / 20) * 20;
+      const currentMilestone = Math.floor(currentCount / 20) * 20;
+      
+      return currentMilestone > prevMilestone && currentCount >= 20;
+    }, []);
 
-// Update useEffect for initial chapter load
-useEffect(() => {
-  if (chapters.length > 0 && !currentChapterId) {
-    setCurrentChapterId(chapters[0].$id);
-    if (editorRef.current) {
-      const initialText = chapters[0].story || '';
-      editorRef.current.innerText = initialText;
-      const currentWordCount = getWordCount(initialText);
+    const updateWordCount = useCallback((text) => {
+      const currentWordCount = getWordCount(text);
+      const shouldFetchSuggestions = checkWordCountMilestone(currentWordCount, wordCount);
+      
       setWordCount(currentWordCount);
-      // Set the last checkpoint to the previous 20-word mark
-      const remainder = currentWordCount % 20;
-      setLastCheckpoint(currentWordCount - remainder - 20); // Subtract 20 to ensure next milestone triggers
-      if (currentWordCount >= 20) {
-        fetchSuggestions(initialText);
+      
+      return shouldFetchSuggestions;
+    }, [wordCount, checkWordCountMilestone, setWordCount]);
+    
+
+  // Initial chapter load
+  useEffect(() => {
+    if (chapters.length > 0 && !currentChapterId && user) {
+      setCurrentChapterId(chapters[0].$id);
+      if (editorRef.current) {
+        const initialText = chapters[0].story || '';
+        editorRef.current.innerText = initialText;
+        const currentWordCount = getWordCount(initialText);
+        setWordCount(currentWordCount);
+        
+        // Fetch initial suggestions if word count >= 20
+        if (currentWordCount >= 20) {
+          fetchSuggestions(initialText);
+        }
       }
     }
-  }
-}, [chapters, currentChapterId, updateWordCount]);
+  }, [chapters, currentChapterId, setCurrentChapterId, setWordCount, user, fetchSuggestions]);
 
-const handleChapterClick = (chapterId) => {
-  setCurrentChapterId(chapterId);
-  const chapter = chapters.find(ch => ch.$id === chapterId);
-  if (editorRef.current && chapter) {
-    const text = chapter.story || '';
-    editorRef.current.innerText = text;
-    const currentWordCount = getWordCount(text);
-    setWordCount(currentWordCount);
-    // Set the last checkpoint to the previous 20-word mark
-    const remainder = currentWordCount % 20;
-    setLastCheckpoint(currentWordCount - remainder - 20); // Subtract 20 to ensure next milestone triggers
-    setSuggestions({ suggestion1: '', suggestion2: '' });
-    if (currentWordCount >= 20) {
-      fetchSuggestions(text);
+  const handleChapterClick = (chapterId) => {
+    setCurrentChapterId(chapterId);
+    const chapter = chapters.find(ch => ch.$id === chapterId);
+    if (editorRef.current && chapter) {
+      const text = chapter.story || '';
+      editorRef.current.innerText = text;
+      const currentWordCount = getWordCount(text);
+      setWordCount(currentWordCount);
+      setSuggestions({ suggestion1: '', suggestion2: '' });
+      
+      // Fetch suggestions for the new chapter if word count >= 20
+      if (currentWordCount >= 20) {
+        fetchSuggestions(text);
+      }
     }
-  }
-};
+  };
 
   // Update handleTextChange
   const handleTextChange = async () => {
-    if (!editorRef.current) return;
+    if (!editorRef.current || !user) return;
+    
     const text = editorRef.current.innerText || '';
-    const hitMilestone = updateWordCount(text);
+    const shouldFetchSuggestions = updateWordCount(text);
 
+    // Save the content
     if (text.trim() && currentChapterId) {
       debouncedSave(text, currentChapterId);
     }
 
-    // Only fetch suggestions when we hit a 20-word milestone
-    if (hitMilestone) {
+    // Fetch suggestions if we've hit a new milestone
+    if (shouldFetchSuggestions) {
       fetchSuggestions(text);
     }
   };
 
   const insertContent = useCallback((content) => {
+    if (!editorRef.current) return;
+    
+    // Get the current text content
+    const currentText = editorRef.current.innerText;
+    
+    // Add the new content at the end with a space
+    editorRef.current.innerText = currentText + (currentText ? ' ' : '') + content;
+    
+    // Move cursor to the end
+    const range = document.createRange();
     const selection = window.getSelection();
-    if (selection.rangeCount > 0) {
-      const range = selection.getRangeAt(0);
-      const text = document.createTextNode(`${content} `);
-      range.insertNode(text);
-      range.collapse(false);
-
-      // Update word count and check for milestone after inserting suggestion
-      if (editorRef.current) {
-        const newText = editorRef.current.innerText;
-        const hitMilestone = updateWordCount(newText);
-        if (hitMilestone) {
-          fetchSuggestions(newText);
-        }
-      }
+    range.selectNodeContents(editorRef.current);
+    range.collapse(false);
+    selection.removeAllRanges();
+    selection.addRange(range);
+  
+    // Check for new milestone after inserting suggestion
+    const newText = editorRef.current.innerText;
+    const shouldFetchSuggestions = updateWordCount(newText);
+    if (shouldFetchSuggestions) {
+      fetchSuggestions(newText);
     }
   }, [updateWordCount, fetchSuggestions]);
 
   const handleSuggestionClick = useCallback((suggestion) => {
     if (!suggestion) return;
-    
+
     // Focus the editor before inserting content
     if (editorRef.current) {
       editorRef.current.focus();
     }
-    
+
     insertContent(suggestion.trim());
     setSuggestions({ suggestion1: '', suggestion2: '' });
   }, [insertContent, setSuggestions]);
@@ -129,9 +154,14 @@ const handleChapterClick = (chapterId) => {
   const handleKeyDown = useCallback(
     (event) => {
       if (!editorRef.current) return;
-
-      if (event.key === '1') handleSuggestionClick(suggestions.suggestion1);
-      else if (event.key === '2') handleSuggestionClick(suggestions.suggestion2);
+  
+      // Only handle keydown when 1 or 2 are pressed with no modifiers
+      if ((event.key === '1' || event.key === '2') && 
+          !event.ctrlKey && !event.altKey && !event.metaKey && !event.shiftKey) {
+        event.preventDefault(); // Prevent the key from being typed
+        if (event.key === '1') handleSuggestionClick(suggestions.suggestion1);
+        else if (event.key === '2') handleSuggestionClick(suggestions.suggestion2);
+      }
     },
     [suggestions, handleSuggestionClick]
   );
@@ -153,8 +183,8 @@ const handleChapterClick = (chapterId) => {
             key={chapter.$id}
             onClick={() => handleChapterClick(chapter.$id)}
             className={`size-6 rounded whitespace-nowrap text-sm ${currentChapterId === chapter.$id
-                ? 'border-2'
-                : 'hover:border'
+              ? 'border-2'
+              : 'hover:border'
               } ${chapter?.completed ? 'bg-green-200' : 'bg-yellow-200'}`}
           >
             {chapter.chapterNo}
@@ -169,15 +199,15 @@ const handleChapterClick = (chapterId) => {
       <div className="mb-4 mt-1">
         <div
           ref={editorRef}
-          className="border-[1px] h-[400px] border-slate-400 p-4 overflow-y-auto z-20"
-          contentEditable={chapters.length > 0}
+          className="border-[1px] h-[400px] border-slate-400 p-4 overflow-y-auto z-20 empty:before:content-[attr(data-placeholder)] empty:before:text-gray-400"
+          contentEditable={chapters.length > 0 || user ? true : false}
           onInput={handleTextChange}
           suppressContentEditableWarning={true}
           style={{
             whiteSpace: 'pre-wrap',
             wordWrap: 'break-word',
           }}
-          data-placeholder={chapters.length > 0 ? "⌨️ Type here" : "Please wait for chapters to be created"}
+          data-placeholder={user ? (chapters.length > 0 ? "⌨️ Type here" : "Add a chapter to start writing") : "Please Login to start writing"}
         />
       </div>
 
@@ -186,8 +216,8 @@ const handleChapterClick = (chapterId) => {
         <span>Word Count: {wordCount}</span>
         {saveStatus && (
           <span className={`italic ${saveStatus === 'Saved' ? 'text-green-600' :
-              saveStatus === 'Error saving' ? 'text-red-600' :
-                'text-blue-600'
+            saveStatus === 'Error saving' ? 'text-red-600' :
+              'text-blue-600'
             }`}>
             {saveStatus}
           </span>
@@ -198,7 +228,7 @@ const handleChapterClick = (chapterId) => {
       {/* Suggestions */}
       <div className="mt-4">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <button 
+          <button
             onClick={() => handleSuggestionClick(suggestions.suggestion1)}
             className="p-3 bg-white border border-slate-400 min-h-[60px] text-left hover:bg-slate-50 transition-colors disabled:cursor-not-allowed disabled:opacity-50"
             disabled={!suggestions.suggestion1}
@@ -206,7 +236,7 @@ const handleChapterClick = (chapterId) => {
             <span className="font-medium mr-2">1:</span>
             {suggestions.suggestion1 || 'Waiting for suggestions...'}
           </button>
-          <button 
+          <button
             onClick={() => handleSuggestionClick(suggestions.suggestion2)}
             className="p-3 bg-white border border-slate-400 min-h-[60px] text-left hover:bg-slate-50 transition-colors disabled:cursor-not-allowed disabled:opacity-50"
             disabled={!suggestions.suggestion2}

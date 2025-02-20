@@ -15,7 +15,7 @@ export const useChapters = () => {
 
 export const ChaptersProvider = ({ children }) => {
     const [chapters, setChapters] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
     const { user } = useAuth();
 
     const DATABASE_ID = appwriteConfig.databaseId;
@@ -24,6 +24,8 @@ export const ChaptersProvider = ({ children }) => {
     useEffect(() => {
         if (user) {
             getUserChapters();
+        } else {
+            setChapters([]);
         }
     }, [user]);
 

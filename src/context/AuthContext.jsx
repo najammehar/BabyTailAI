@@ -20,6 +20,7 @@ export const AuthProvider = ({ children }) => {
 
     const checkAuth = async () => {
         try {
+            console.log(account);
             const currentSession = await account.getSession('current');
             if (currentSession) {
                 const accountDetails = await account.get();
@@ -36,6 +37,7 @@ export const AuthProvider = ({ children }) => {
     };
 
     useEffect(() => {
+        // logout();
         checkAuth();
     }, []);
 
@@ -95,7 +97,7 @@ export const AuthProvider = ({ children }) => {
         try {
             await account.deleteSession('current');
             setUser(null);
-            navigate('/login');
+            navigate('/');
         } catch (error) {
             console.error('Logout failed:', error);
         }

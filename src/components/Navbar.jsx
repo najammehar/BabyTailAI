@@ -24,6 +24,7 @@ const Navbar = () => {
           </>
         ) : (
           <>
+          <Link to="/milestones">Milestones</Link>
             <div>
               <MenuIcon />
             </div>
