@@ -10,6 +10,8 @@ import { MilestonesProvider } from "./context/MilestonesContext";
 import { ChaptersProvider } from "./context/ChapterContext";
 import { StoryProvider } from "./context/StoryContext";
 import ProtectedRoute from "./components/ProtectedRoute";
+import Images from "./pages/Images";
+import PublicRoute from "./components/PublicRoute";
 
 function App() {
   return (
@@ -20,11 +22,12 @@ function App() {
             <StoryProvider>
               <Navbar />
               <Routes>
-                <Route path="/" element={<ProtectedRoute><Home /></ProtectedRoute>}>
-                  <Route index element={<ProtectedRoute><Signup /></ProtectedRoute>} />
-                  <Route path="login" element={<Login />} />
+                <Route path="/" element={<Home />}>
+                  <Route index element={<PublicRoute><Signup /></PublicRoute>} />
+                  <Route path="login" element={<PublicRoute><Login /></PublicRoute>} />
                   <Route path="milestones" element={<ProtectedRoute><Milestones /></ProtectedRoute>} />
                   <Route path="chapters" element={<ProtectedRoute><Chapters /></ProtectedRoute>} />
+                  <Route path="images" element={<ProtectedRoute><Images /></ProtectedRoute>} />
                 </Route>
               </Routes>
             </StoryProvider>

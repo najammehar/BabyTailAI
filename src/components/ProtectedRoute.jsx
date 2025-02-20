@@ -10,19 +10,17 @@ const ProtectedRoute = ({ children }) => {
 
     useEffect(() => {
         if (!loading && !user) {
-            navigate('/login');
-        } else{
-            if (milestone === null){
-                navigate('/milestones');
-            } else {
-                navigate('/chapters');
-            }
+            navigate('/');
         }
     }, [user, loading, navigate]);
 
-    if (loading) {
-        return <div>Loading...</div>;
-    }
+    // if (loading) {
+    //     return (
+    //         <div className="flex justify-center items-center h-screen">
+    //                 <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-900"></div>
+    //         </div>
+    //     )
+    // }
 
     return user ? children : null;
 };

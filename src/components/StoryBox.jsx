@@ -158,7 +158,6 @@ const StoryEditor = () => {
       // Only handle keydown when 1 or 2 are pressed with no modifiers
       if ((event.key === '1' || event.key === '2') && 
           !event.ctrlKey && !event.altKey && !event.metaKey && !event.shiftKey) {
-        event.preventDefault(); // Prevent the key from being typed
         if (event.key === '1') handleSuggestionClick(suggestions.suggestion1);
         else if (event.key === '2') handleSuggestionClick(suggestions.suggestion2);
       }

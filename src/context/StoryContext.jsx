@@ -1,7 +1,6 @@
 // StoryContext.js
 import React, { createContext, useContext, useState, useCallback } from 'react';
 import { useChapters } from './ChapterContext';
-import { useAuth } from './AuthContext';
 import debounce from 'lodash/debounce';
 import axios from 'axios';
 

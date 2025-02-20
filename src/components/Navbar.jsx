@@ -8,7 +8,7 @@ const Navbar = () => {
   return (
     <nav className="flex justify-between p-4 bg-white dark:bg-gray-800 shadow">
       <h1 className="text-lg font-bold">BabyTailAI</h1>
-      <div className="flex gap-4">
+      <div className="flex items-center gap-4">
         {user ? (
           <>
             <Link to="/milestones">Milestones</Link>
@@ -17,17 +17,17 @@ const Navbar = () => {
             {/* <button onClick={() => setDarkMode(!darkMode)}>
               {darkMode ? <Sun /> : <Moon />}
             </button> */}
-            <button onClick={logout} className="p-2 bg-red-500 text-white">
+            <button onClick={logout} className="p-2 rounded bg-red-500 text-white">
               Logout
             </button>
-            <Menu />
+            {/* <Menu /> */}
           </>
         ) : (
           <>
-          <Link to="/milestones">Milestones</Link>
+          {/* <Link to="/milestones">Milestones</Link>
             <div>
               <MenuIcon />
-            </div>
+            </div> */}
           </>
         )}
       </div>

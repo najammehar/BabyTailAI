@@ -46,8 +46,6 @@ export const MilestonesProvider = ({ children }) => {
         } catch (error) {
             console.error('Error fetching milestone:', error);
             setMilestone(null);
-        } finally {
-            setLoading(false);
         }
     };
 
