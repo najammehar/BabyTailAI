@@ -8,7 +8,7 @@ const Navbar = () => {
   return (
     <nav className="flex justify-between items-center p-4 bg-white dark:bg-gray-800 shadow">
       <h1 className="font-bold">BabyTailAI</h1>
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-2">
         {user ? (
           <>
             <Link className="text-sm" to="/milestones">Milestones</Link>
