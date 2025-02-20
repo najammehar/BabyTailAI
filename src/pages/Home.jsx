@@ -24,7 +24,7 @@ function Home() {
         <div className="w-full lg:w-2/3 overflow-y-auto">
           <StoryBox />
         </div>
-          <div className="w-full lg:w-1/3 overflow-y-auto border border-slate-400 mt-14">
+          <div className="w-full lg:w-1/3 overflow-y-auto border border-slate-400 mt-[60px]">
             <Outlet />
           </div>
       </div>

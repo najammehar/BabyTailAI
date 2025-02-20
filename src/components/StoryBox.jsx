@@ -175,20 +175,30 @@ const StoryEditor = () => {
   return (
     <div>
       {/* Chapter Selection */}
-      <div className="flex items-center gap-2 mb-4 overflow-x-auto">
-        <div className='font-bold text-xl'>Chapters:</div>
-        {chapters.map((chapter) => (
-          <button
-            key={chapter.$id}
-            onClick={() => handleChapterClick(chapter.$id)}
-            className={`size-6 rounded whitespace-nowrap text-sm ${currentChapterId === chapter.$id
-              ? 'border-2'
-              : 'hover:border'
-              } ${chapter?.completed ? 'bg-green-200' : 'bg-yellow-200'}`}
-          >
-            {chapter.chapterNo}
-          </button>
-        ))}
+      <div className="flex items-center gap-4 mb-4 overflow-x-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 pb-2 w-[90%]">
+        <div className="font-bold text-xl whitespace-nowrap">Chapters:</div>
+        <div className="flex gap-2 flex-nowrap">
+          {chapters.map((chapter) => (
+            <button
+              key={chapter.$id}
+              onClick={() => handleChapterClick(chapter.$id)}
+              className={`
+                min-w-6 h-6 
+                rounded 
+                flex items-center justify-center 
+                text-sm 
+                transition-all
+                ${currentChapterId === chapter.$id
+                  ? 'border-2'
+                  : 'hover:border'
+                } 
+                ${chapter?.completed ? 'bg-green-200' : 'bg-yellow-200'}
+              `}
+            >
+              {chapter.chapterNo}
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* Progress Bar */}
