@@ -199,7 +199,7 @@ const StoryEditor = () => {
         <div
           ref={editorRef}
           className="border-[1px] h-[400px] border-slate-400 p-4 overflow-y-auto z-20 empty:before:content-[attr(data-placeholder)] empty:before:text-gray-400"
-          contentEditable={chapters.length > 0 || user ? true : false}
+          contentEditable={chapters.length > 0 && user ? true : false}
           onInput={handleTextChange}
           suppressContentEditableWarning={true}
           style={{
