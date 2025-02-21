@@ -12,6 +12,7 @@ import { StoryProvider } from "./context/StoryContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Images from "./pages/Images";
 import PublicRoute from "./components/PublicRoute";
+import { ImageProvider } from "./context/ImageContext";
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
         <MilestonesProvider>
           <ChaptersProvider>
             <StoryProvider>
+            <ImageProvider>
               <Navbar />
               <Routes>
                 <Route path="/" element={<Home />}>
@@ -30,6 +32,7 @@ function App() {
                   <Route path="images" element={<ProtectedRoute><Images /></ProtectedRoute>} />
                 </Route>
               </Routes>
+              </ImageProvider>
             </StoryProvider>
           </ChaptersProvider>
         </MilestonesProvider>

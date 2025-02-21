@@ -104,9 +104,9 @@ const MilestoneForm = ({ handleClose, backgroundColor = "white" }) => {
   };
 
   return (
-    <div className="p-6 bg-white dark:bg-gray-800 dark:text-white rounded-lg h-full lg:h-[522px] overflow-y-auto" style={{ backgroundColor }}>
+    <div className="p-6 dark:text-slate-200 h-full lg:h-[522px] overflow-y-auto">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-semibold text-gray-800">Milestones</h2>
+        <h2 className="text-xl font-semibold text-slate-800 dark:text-slate-200">Milestones</h2>
       </div>
 
       {submitError && (
@@ -116,20 +116,21 @@ const MilestoneForm = ({ handleClose, backgroundColor = "white" }) => {
       )}
 
       <form onSubmit={handleSubmit} className="space-y-4">
-        <div className="grid grid-cols-1 gap-4 text-black">
+        <div className="grid grid-cols-1 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700">I'm writing about?</label>
+            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">I'm writing about?</label>
             <div className="relative">
-              <Heart className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+              <Heart className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 w-5 h-5" />
               <select 
                 name="relation"
                 value={formData.relation}
                 onChange={handleChange}
-                className={`mt-1 block w-full pl-10 p-2 border rounded-md shadow-sm ${
-                  errors.relation 
-                    ? 'border-red-500 focus:ring-red-500' 
-                    : 'border-gray-300 focus:ring-2 focus:ring-blue-500'
-                }`}
+                className={`mt-1 block w-full pl-10 p-2 rounded-md shadow-sm 
+                  bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-200 border border-slate-300 dark:border-slate-600
+                  ${errors.relation 
+                    ? 'border-red-500 dark:border-red-600 focus:ring-red-500' 
+                    : 'border-slate-300 dark:border-slate-600 focus:ring-2 focus:ring-blue-500'
+                  }`}
                 required
               >
                 <option value="">Select...</option>
@@ -142,23 +143,24 @@ const MilestoneForm = ({ handleClose, backgroundColor = "white" }) => {
               </select>
             </div>
             {errors.relation && (
-              <p className="text-sm text-red-500 mt-1">{errors.relation}</p>
+              <p className="text-sm text-red-500 dark:text-red-400 mt-1">{errors.relation}</p>
             )}
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700">Their Sex</label>
+            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">Their Sex</label>
             <div className="relative">
-              <User className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+              <User className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 w-5 h-5" />
               <select 
                 name="sex"
                 value={formData.sex}
                 onChange={handleChange}
-                className={`mt-1 block w-full pl-10 p-2 border rounded-md shadow-sm ${
-                  errors.sex 
-                    ? 'border-red-500 focus:ring-red-500' 
-                    : 'border-gray-300 focus:ring-2 focus:ring-blue-500'
-                }`}
+                className={`mt-1 block w-full pl-10 p-2 rounded-md shadow-sm
+                  bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-200 border border-slate-300 dark:border-slate-600
+                  ${errors.sex 
+                    ? 'border-red-500 dark:border-red-600 focus:ring-red-500' 
+                    : 'border-slate-300 dark:border-slate-600 focus:ring-2 focus:ring-blue-500'
+                  }`}
                 required
               >
                 <option value="">Select...</option>
@@ -167,73 +169,79 @@ const MilestoneForm = ({ handleClose, backgroundColor = "white" }) => {
               </select>
             </div>
             {errors.sex && (
-              <p className="text-sm text-red-500 mt-1">{errors.sex}</p>
+              <p className="text-sm text-red-500 dark:text-red-400 mt-1">{errors.sex}</p>
             )}
           </div>
 
           <div className="relative">
-            <User className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+            <User className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 w-5 h-5" />
             <input
               type="text"
               name="name"
               placeholder="Their Name"
               value={formData.name}
               onChange={handleChange}
-              className={`block w-full pl-10 p-2 border rounded-md shadow-sm ${
-                errors.name 
-                  ? 'border-red-500 focus:ring-red-500' 
-                  : 'border-gray-300 focus:ring-2 focus:ring-blue-500'
-              }`}
+              className={`block w-full pl-10 p-2 rounded-md shadow-sm
+                bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-200
+                placeholder:text-slate-400 dark:placeholder:text-slate-500 border border-slate-300 dark:border-slate-600
+                ${errors.name 
+                  ? 'border-red-500 dark:border-red-600 focus:ring-red-500' 
+                  : 'border-slate-300 dark:border-slate-600 focus:ring-2 focus:ring-blue-500'
+                }`}
               required
             />
             {errors.name && (
-              <p className="text-sm text-red-500 mt-1">{errors.name}</p>
+              <p className="text-sm text-red-500 dark:text-red-400 mt-1">{errors.name}</p>
             )}
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700">Date of Birth</label>
+            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">Date of Birth</label>
             <div className="relative">
-              <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+              <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 w-5 h-5" />
               <input
                 type="date"
                 name="dateOfBirth"
                 value={formData.dateOfBirth}
                 onChange={handleChange}
-                className={`mt-1 block w-full pl-10 p-2 border rounded-md shadow-sm ${
-                  errors.dateOfBirth 
-                    ? 'border-red-500 focus:ring-red-500' 
-                    : 'border-gray-300 focus:ring-2 focus:ring-blue-500'
-                }`}
+                className={`mt-1 block w-full pl-10 p-2 rounded-md shadow-sm
+                  bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-200 border border-slate-300 dark:border-slate-600
+                  ${errors.dateOfBirth 
+                    ? 'border-red-500 dark:border-red-600 focus:ring-red-500' 
+                    : 'border-slate-300 dark:border-slate-600 focus:ring-2 focus:ring-blue-500'
+                  }`}
                 required
               />
             </div>
             {errors.dateOfBirth && (
-              <p className="text-sm text-red-500 mt-1">{errors.dateOfBirth}</p>
+              <p className="text-sm text-red-500 dark:text-red-400 mt-1">{errors.dateOfBirth}</p>
             )}
           </div>
 
           <div className="relative">
-            <Home className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+            <Home className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 w-5 h-5" />
             <input
               type="text"
               name="hometown"
               placeholder="Hometown"
               value={formData.hometown}
               onChange={handleChange}
-              className="block w-full pl-10 p-2 border border-gray-300 rounded-md shadow-sm"
+              className="block w-full pl-10 p-2 border border-slate-300 dark:border-slate-600 rounded-md shadow-sm
+                bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-200
+                placeholder:text-slate-400 dark:placeholder:text-slate-500"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700">Ethnicity</label>
+            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">Ethnicity</label>
             <div className="relative">
-              <Globe className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+              <Globe className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 w-5 h-5" />
               <select 
                 name="ethnicity"
                 value={formData.ethnicity}
                 onChange={handleChange}
-                className="mt-1 block w-full pl-10 p-2 border border-gray-300 rounded-md shadow-sm"
+                className="mt-1 block w-full pl-10 p-2 border border-slate-300 dark:border-slate-600 rounded-md shadow-sm
+                  bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-200"
               >
                 <option value="">Select...</option>
                 <option value="african">African</option>
@@ -249,63 +257,44 @@ const MilestoneForm = ({ handleClose, backgroundColor = "white" }) => {
             </div>
           </div>
 
-          <div className="relative">
-            <Users className="absolute left-3 top-3 text-gray-400 w-5 h-5" />
-            <textarea
-              name="familyMembers"
-              placeholder="Tell us about their family members..."
-              value={formData.familyMembers}
-              onChange={handleChange}
-              className="block w-full pl-10 p-2 border border-gray-300 rounded-md shadow-sm h-24"
-            />
-          </div>
-
-          <div className="relative">
-            <BookOpen className="absolute left-3 top-3 text-gray-400 w-5 h-5" />
-            <textarea
-              name="specialTraditions"
-              placeholder="Any special family traditions?"
-              value={formData.specialTraditions}
-              onChange={handleChange}
-              className="block w-full pl-10 p-2 border border-gray-300 rounded-md shadow-sm h-24"
-            />
-          </div>
-
-          <div className="relative">
-            <Heart className="absolute left-3 top-3 text-gray-400 w-5 h-5" />
-            <textarea
-              name="favoriteMemories"
-              placeholder="Share your favorite memories..."
-              value={formData.favoriteMemories}
-              onChange={handleChange}
-              className="block w-full pl-10 p-2 border border-gray-300 rounded-md shadow-sm h-24"
-            />
-          </div>
-
-          <div className="relative">
-            <Heart className="absolute left-3 top-3 text-gray-400 w-5 h-5" />
-            <textarea
-              name="parentWishes"
-              placeholder="Parent/Grandparent's Wishes..."
-              value={formData.parentWishes}
-              onChange={handleChange}
-              className="block w-full pl-10 p-2 border border-gray-300 rounded-md shadow-sm h-24"
-            />
-          </div>
+          {/* Textarea fields with consistent dark mode styling */}
+          {[
+            { name: 'familyMembers', icon: Users, placeholder: 'Tell us about their family members...' },
+            { name: 'specialTraditions', icon: BookOpen, placeholder: 'Any special family traditions?' },
+            { name: 'favoriteMemories', icon: Heart, placeholder: 'Share your favorite memories...' },
+            { name: 'parentWishes', icon: Heart, placeholder: "Parent/Grandparent's Wishes..." }
+          ].map((field) => (
+            <div className="relative" key={field.name}>
+              <field.icon className="absolute left-3 top-3 text-slate-400 dark:text-slate-500 w-5 h-5" />
+              <textarea
+                name={field.name}
+                placeholder={field.placeholder}
+                value={formData[field.name]}
+                onChange={handleChange}
+                className="block w-full pl-10 p-2 border border-slate-300 dark:border-slate-600 rounded-md shadow-sm h-24
+                  bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-200
+                  placeholder:text-slate-400 dark:placeholder:text-slate-500"
+              />
+            </div>
+          ))}
         </div>
 
         <div className="flex justify-end pt-4">
           <button
             type="submit"
             disabled={isSubmitting}
-            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-4 py-2 bg-blue-600 dark:bg-blue-700 text-white rounded-md 
+              hover:bg-blue-700 dark:hover:bg-blue-800 
+              focus:outline-none focus:ring-2 focus:ring-blue-500 
+              disabled:opacity-50 disabled:cursor-not-allowed
+              transition-colors"
           >
             {isSubmitting 
-                ? "Saving..." 
-                : milestone 
-                  ? "Update Milestone" 
-                  : "Save Milestone"
-              }
+              ? "Saving..." 
+              : milestone 
+                ? "Update Milestone" 
+                : "Save Milestone"
+            }
           </button>
         </div>
       </form>
