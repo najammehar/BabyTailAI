@@ -212,7 +212,7 @@ const StoryEditor = () => {
       <div className="flex mb-4 mt-1 relative">
         <div
           ref={editorRef}
-          className="border-[1px] h-[400px] w-full border-slate-400 dark:border-slate-600 p-4 overflow-y-auto z-20 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-200 empty:before:content-[attr(data-placeholder)] empty:before:text-gray-400 dark:empty:before:text-slate-500"
+          className={`border-[1px] h-[400px] ${images.length> 0 ? 'w-3/5 border-r-0': 'w-full'} border-slate-400 dark:border-slate-600 p-4 overflow-y-auto z-20 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-200 empty:before:content-[attr(data-placeholder)] empty:before:text-gray-400 dark:empty:before:text-slate-500`}
           contentEditable={chapters.length > 0 && user ? true : false}
           onInput={handleTextChange}
           suppressContentEditableWarning={true}
@@ -223,7 +223,7 @@ const StoryEditor = () => {
           data-placeholder={user ? (chapters.length > 0 ? "⌨️ Type here" : "Add a chapter to start writing") : "Please Login to start writing"}
         />
         {images.length > 0 && (
-        <div className='border border-l-0 border-slate-400 dark:border-slate-600 h-[400px] overflow-y-auto w-1/3 p-4 bg-white dark:bg-slate-800'>
+        <div className='border border-l-0 border-slate-400 dark:border-slate-600 h-[400px] overflow-y-auto w-2/5 p-4 bg-white dark:bg-slate-800'>
           <div className="grid grid-cols-1 gap-2">
             {images.map((image) => (
               <img

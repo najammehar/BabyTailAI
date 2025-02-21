@@ -147,6 +147,17 @@ const Navbar = () => {
                   <Mail className="w-5 h-5 mr-2" /> Support
                 </button>
                 <button
+                  onClick={() => setIsDark(!isDark)}
+                  className="flex items-center w-full px-3 py-2 rounded-lg text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                >
+                  {isDark ? (
+                    <Sun className="w-5 h-5 mr-2 text-yellow-500" />
+                  ) : (
+                    <Moon className="w-5 h-5 mr-2 text-slate-600 dark:text-slate-400" />
+                  )}
+                  {isDark ? "Light" : "Dark"} Mode
+                </button>
+                <button
                   onClick={handleLogout}
                   className="w-full mt-2 px-3 py-2 rounded-lg bg-red-500 hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700 text-white transition-colors"
                 >
