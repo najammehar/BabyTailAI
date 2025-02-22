@@ -15,12 +15,12 @@ export const useAuth = () => {
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
     const checkAuth = async () => {
         try {
-            console.log(account);
+            setLoading(true);
             const currentSession = await account.getSession('current');
             if (currentSession) {
                 const accountDetails = await account.get();

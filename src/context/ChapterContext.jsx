@@ -31,6 +31,7 @@ export const ChaptersProvider = ({ children }) => {
 
     const getUserChapters = async () => {
         try {
+            setLoading(true);
             const response = await databases.listDocuments(
                 DATABASE_ID,
                 COLLECTION_ID,

@@ -11,33 +11,14 @@ export const ImageProvider = ({ children }) => {
   const { user } = useAuth();
   const { currentChapterId } = useStory();
   const [images, setImages] = useState([]);
-
-  const fetchImages = async () => {
-    if (!user || !currentChapterId) {
-        setImages([]);
-        return;
-    }
-    
-    try {
-      const response = await databases.listDocuments(
-        appwriteConfig.databaseId,
-        appwriteConfig.imagesCollectionId,
-        [
-          Query.equal('userId', user.$id),
-          Query.equal('chapterId', currentChapterId)
-        ]
-      );
-      setImages(response.documents);
-    } catch (error) {
-      console.error('Error fetching images:', error);
-    }
-  };
+  const [loading, setLoading] = useState(false);
 
   const uploadImage = async (file) => {
     if (!user || !currentChapterId) return;
 
     try {
       // Upload to storage
+      setLoading(true);
       const storageResponse = await storage.createFile(
         appwriteConfig.imagesBucketId,
         ID.unique(),
@@ -60,25 +41,13 @@ export const ImageProvider = ({ children }) => {
       setImages(prev => [...prev, dbResponse]);
     } catch (error) {
       console.error('Error uploading image:', error);
+    } finally {
+      setLoading(false);
     }
   };
-
-  const deleteImage = async (imageId, fileId) => {
-    try {
-      await storage.deleteFile(appwriteConfig.imagesBucketId, fileId);
-      await databases.deleteDocument(appwriteConfig.databaseId, appwriteConfig.imagesCollectionId, imageId);
-      setImages(prev => prev.filter(img => img.$id !== imageId));
-    } catch (error) {
-      console.error('Error deleting image:', error);
-    }
-  };
-
-  useEffect(() => {
-    if (user && currentChapterId) fetchImages();
-  }, [user, currentChapterId]);
 
   return (
-    <ImageContext.Provider value={{ images, uploadImage, deleteImage }}>
+    <ImageContext.Provider value={{ images, uploadImage, loading }}>
       {children}
     </ImageContext.Provider>
   );

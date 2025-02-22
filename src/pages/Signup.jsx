@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { UserPlus, Mail, Lock, User } from "lucide-react";
+import { UserPlus, Mail, Lock, User, XCircle } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { Alert, AlertDescription } from "../components/ui/Alert";
 
@@ -72,9 +72,14 @@ const Signup = () => {
     <div className="flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         <div>
-          <h2 className="text-2xl font-bold text-center text-slate-800 dark:text-slate-200 mb-8">
-            Create your account
-          </h2>
+        <div className="flex justify-between items-center mb-8">
+            <h2 className="text-2xl font-bold text-center text-slate-800 dark:text-slate-200">
+              Create Account
+            </h2>
+            <button>
+              <XCircle className="w-6 h-6 text-slate-500 dark:text-slate-400" onClick={() => setShowModal(false)} />
+            </button>
+            </div>
 
           {submitError && (
             <Alert variant="destructive" className="mb-6">

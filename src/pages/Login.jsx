@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Mail, Lock } from "lucide-react";
+import { Mail, Lock, XCircle } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { Alert, AlertDescription } from "../components/ui/Alert";
 
@@ -11,6 +11,7 @@ const Login = () => {
   const [errors, setErrors] = useState({});
   const [submitError, setSubmitError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showModal, setShowModal] = useState(true); 
 
   const validateForm = () => {
     const newErrors = {};
@@ -59,12 +60,17 @@ const Login = () => {
   };
 
     return (
-      <div className="flex items-center justify-center p-4">
+      <div className={`${!showModal && "hidden"} flex items-center justify-center p-4`} >
         <div className="w-full max-w-md">
           <div>
-            <h2 className="text-2xl font-bold text-center text-slate-800 dark:text-slate-200 mb-8">
+          <div className="flex justify-between items-center mb-8">
+            <h2 className="text-2xl font-bold text-center text-slate-800 dark:text-slate-200">
               Welcome back
             </h2>
+            <button>
+              <XCircle className="w-6 h-6 text-slate-500 dark:text-slate-400" onClick={() => setShowModal(false)} />
+            </button>
+            </div>
   
             {submitError && (
               <Alert variant="destructive" className="mb-6">

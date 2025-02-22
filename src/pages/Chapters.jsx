@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { BookOpen } from "lucide-react";
+import { BookOpen, XCircle } from "lucide-react";
 import { useChapters } from "../context/ChapterContext";
 import { useAuth } from "../context/AuthContext";
 
@@ -35,7 +35,7 @@ const Chap = () => {
   const [selectedOptions, setSelectedOptions] = useState(Array(chapterOptions.length).fill(""));
   const [newChapter, setNewChapter] = useState("");
   const [localLoading, setLocalLoading] = useState(false);
-
+  const [showModal, setShowModal] = useState(true)
   useEffect(() => {
     if (chapters.length > 0) {
       const updatedOptions = Array(chapterOptions.length).fill("");
@@ -113,18 +113,26 @@ const Chap = () => {
 
   if (loading || localLoading) {
     return (
-      <div className="flex justify-center items-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+      <div className="w-full h-full flex justify-center items-center">
+<div
+  class="w-10 h-10 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"
+></div>
+
       </div>
     );
   }
 
   return (
-    <div>
-      <h1 className="flex justify-center text-lg font-bold font-sm mb-2 mt-4">
+    <div className={`${!showModal && 'hidden'} p-4 custom-scrollbar`}>
+      <div className="flex justify-between items-center mb-4 px-8">
+      <h1 className="flex justify-center items-center text-lg font-bold font-sm mb-2 mt-4">
         <BookOpen className="text-2xl mr-2 text-slate-700 dark:text-slate-200"/>
         Chapters
       </h1>
+          <button>
+            <XCircle className="w-6 h-6 text-slate-500 dark:text-slate-400" onClick={() => setShowModal(false)} />
+          </button>
+        </div>
 
       <div className="flex justify-center items-center mb-4 sticky top-0 bg-inherit z-10">
         <input
@@ -147,10 +155,8 @@ const Chap = () => {
         </button>
       </div>
 
-      <form className="grid grid-cols-2 gap-x-4 gap-y-6 mx-auto w-[90%] py-6 h-[27rem] 
-                    overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-gray-300 
-                    dark:scrollbar-thumb-slate-600 scrollbar-track-gray-100 
-                    dark:scrollbar-track-slate-800">
+      <form className="grid grid-cols-2 gap-x-4 gap-y-6 mx-auto w-[90%] py-6 h-[23rem] 
+                    overflow-y-auto pr-2 custom-scrollbar">
         {initialChapOptions.map((option, index) => {
           const chapter = chapters.find(c => c.chapterNo === index + 1);
           return (

@@ -11,3 +11,61 @@
     background-color: #0f172a;
     color: #e2e8f0;
 }
+
+.custom-scrollbar {
+  --scrollbar-width: 8px;
+  --scrollbar-track: #e2e8f0;
+  --scrollbar-thumb: #94a3b8;
+  
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+  -ms-overflow-style: auto;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: var(--scrollbar-width);
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: var(--scrollbar-track);
+  border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: var(--scrollbar-thumb);
+  border-radius: 4px;
+  border: 2px solid var(--scrollbar-track);
+}
+
+/* Dark mode styles - using the same 'dark' class as your navbar */
+.dark .custom-scrollbar {
+  --scrollbar-track: #1e293b;
+  --scrollbar-thumb: #475569;
+  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+}
+
+.dark .custom-scrollbar::-webkit-scrollbar-track {
+  background: var(--scrollbar-track);
+}
+
+.dark .custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: var(--scrollbar-thumb);
+  border-color: var(--scrollbar-track);
+}
+
+[contenteditable] {
+  outline: none;
+}
+
+[contenteditable]::before {
+  content: attr(data-placeholder);
+  color: #94a3b8;
+  position: absolute;
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+[contenteditable]:focus::before,
+[contenteditable]:not(:empty)::before {
+  content: "";
+}

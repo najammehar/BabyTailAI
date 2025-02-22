@@ -1,3 +1,4 @@
+```jsx
 // StoryEditor.js
 import React, { useEffect, useRef, useCallback } from 'react';
 import { useStory } from '../context/StoryContext';
@@ -68,12 +69,14 @@ const StoryEditor = () => {
     if (chapters.length > 0 && !currentChapterId && user) {
       setCurrentChapterId(chapters[0].$id);
       if (editorRef.current) {
-        deserializeContent(chapters[0].story || '');
-        const currentWordCount = getWordCount(editorRef.current.innerText);
+        const initialText = chapters[0].story || '';
+        editorRef.current.innerText = initialText;
+        const currentWordCount = getWordCount(initialText);
         setWordCount(currentWordCount);
 
+        // Fetch initial suggestions if word count >= 20
         if (currentWordCount >= 20) {
-          fetchSuggestions(editorRef.current.innerText);
+          fetchSuggestions(initialText);
         }
       }
     }
@@ -83,86 +86,34 @@ const StoryEditor = () => {
     setCurrentChapterId(chapterId);
     const chapter = chapters.find(ch => ch.$id === chapterId);
     if (editorRef.current && chapter) {
-      deserializeContent(chapter.story || '');
-      const currentWordCount = getWordCount(editorRef.current.innerText);
+      const text = chapter.story || '';
+      editorRef.current.innerText = text;
+      const currentWordCount = getWordCount(text);
       setWordCount(currentWordCount);
       setSuggestions({ suggestion1: '', suggestion2: '' });
 
+      // Fetch suggestions for the new chapter if word count >= 20
       if (currentWordCount >= 20) {
-        fetchSuggestions(editorRef.current.innerText);
+        fetchSuggestions(text);
       }
     }
   };
-
-    // Helper function to serialize editor content
-    const serializeContent = () => {
-      if (!editorRef.current) return '';
-      
-      const content = [];
-      editorRef.current.childNodes.forEach(node => {
-        if (node.nodeType === Node.ELEMENT_NODE && node.tagName === 'IMG') {
-          // Save image with its attributes
-          content.push({
-            type: 'image',
-            src: node.src,
-            className: node.className,
-            width: node.width,
-            height: node.height
-          });
-        } else if (node.nodeType === Node.TEXT_NODE) {
-          content.push({
-            type: 'text',
-            content: node.textContent
-          });
-        }
-      });
-      
-      return JSON.stringify(content);
-    };
-  
-    // Helper function to deserialize content
-    const deserializeContent = (serializedContent) => {
-      if (!editorRef.current) return;
-      
-      editorRef.current.innerHTML = '';
-      
-      try {
-        const content = JSON.parse(serializedContent);
-        content.forEach(item => {
-          if (item.type === 'image') {
-            const img = new Image();
-            img.src = item.src;
-            img.className = item.className;
-            img.width = item.width;
-            img.height = item.height;
-            editorRef.current.appendChild(img);
-          } else if (item.type === 'text') {
-            const textNode = document.createTextNode(item.content);
-            editorRef.current.appendChild(textNode);
-          }
-        });
-      } catch (error) {
-        console.error('Error deserializing content:', error);
-        editorRef.current.innerText = serializedContent || '';
-      }
-    };
 
   // Update handleTextChange
   const handleTextChange = async () => {
     if (!editorRef.current || !user) return;
 
-    const serializedContent = serializeContent();
-    const textContent = editorRef.current.innerText || '';
-    const shouldFetchSuggestions = updateWordCount(textContent);
+    const text = editorRef.current.innerText || '';
+    const shouldFetchSuggestions = updateWordCount(text);
 
-    // Save the serialized content
-    if (serializedContent && currentChapterId) {
-      debouncedSave(serializedContent, currentChapterId);
+    // Save the content
+    if (text.trim() && currentChapterId) {
+      debouncedSave(text, currentChapterId);
     }
 
     // Fetch suggestions if we've hit a new milestone
     if (shouldFetchSuggestions) {
-      fetchSuggestions(textContent);
+      fetchSuggestions(text);
     }
   };
 
@@ -225,33 +176,34 @@ const StoryEditor = () => {
   const currentChapter = chapters.find(ch => ch.$id === currentChapterId);
 
   useEffect(() => {
-    // Check if images array exists and has items
-    if (images?.length > 0 && editorRef.current) {
+    if (images.length > 0 && editorRef.current) {
       const img = new Image();
       
       img.onload = () => {
         img.className = "float-right ml-7 mb-7 w-[170px] h-[235px] object-cover rounded-md shadow-md";
         
         const editor = editorRef.current;
-        if (!editor) return; // Safety check
-  
         const firstChild = editor.firstChild;
-  
+
+        // Insert the image at the beginning of the editor
         if (!firstChild) {
           editor.appendChild(img);
         } else {
           editor.insertBefore(img, firstChild);
         }
-  
+
+        // Place cursor after the image
         const selection = window.getSelection();
         const range = document.createRange();
         range.setStartAfter(img);
         selection.removeAllRanges();
         selection.addRange(range);
         
+        // Trigger text change to save content
         handleTextChange();
       };
-  
+
+      // Set the image source to the latest uploaded image
       img.src = images[images.length - 1].url;
     }
   }, [images]);
@@ -259,15 +211,15 @@ const StoryEditor = () => {
   return (
     <div className="text-slate-700 dark:text-slate-200">
       {/* Chapter Selection */}
-      <div className="flex items-center gap-4 mb-1 overflow-x-auto custom-scrollbar pb-2 w-[85%]">
-        <div className="font-bold whitespace-nowrap">Chapters:</div>
-        <div className="flex gap-1 flex-nowrap">
+      <div className="flex items-center gap-4 mb-4 overflow-x-auto custom-scrollbar pb-2 w-[90%]">
+        <div className="font-bold text-xl whitespace-nowrap">Chapters:</div>
+        <div className="flex gap-2 flex-nowrap">
           {chapters.map((chapter) => (
             <button
               key={chapter.$id}
               onClick={() => handleChapterClick(chapter.$id)}
               className={`
-                min-w-5 h-5
+                min-w-6 h-6
                 rounded
                 flex items-center justify-center
                 text-sm
@@ -320,7 +272,7 @@ const StoryEditor = () => {
         </div>
         )}
       </div> */}
-      <div className="flex mb-2 mt-1 relative">
+      <div className="flex mb-4 mt-1 relative">
         <div
           ref={editorRef}
           className="w-full border border-slate-400 dark:border-slate-600 p-4 h-[400px] overflow-y-auto z-20 custom-scrollbar bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-200 empty:before:content-[attr(data-placeholder)] empty:before:text-gray-400 dark:empty:before:text-slate-500"
@@ -337,7 +289,7 @@ const StoryEditor = () => {
 
 
       {/* Word Count */}
-      <div className="text-sm text-slate-600 dark:text-slate-400 mb-2 flex items-center gap-4">
+      <div className="text-sm text-slate-600 dark:text-slate-400 mb-4 flex items-center gap-4">
         <span>Word Count: {wordCount}</span>
         {saveStatus && (
           <span className={`italic ${
@@ -353,11 +305,11 @@ const StoryEditor = () => {
       <Div1 />
 
       {/* Suggestions */}
-      <div className="mt-2">
+      <div className="mt-4">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <button
             onClick={() => handleSuggestionClick(suggestions.suggestion1)}
-            className="px-3 py-2 bg-white dark:bg-slate-800 border border-slate-400 dark:border-slate-600 min-h-[45px] text-left hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors disabled:cursor-not-allowed disabled:opacity-50"
+            className="p-3 bg-white dark:bg-slate-800 border border-slate-400 dark:border-slate-600 min-h-[60px] text-left hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors disabled:cursor-not-allowed disabled:opacity-50"
             disabled={!suggestions.suggestion1}
           >
             <span className="font-medium mr-2">1:</span>
@@ -365,7 +317,7 @@ const StoryEditor = () => {
           </button>
           <button
             onClick={() => handleSuggestionClick(suggestions.suggestion2)}
-            className="px-3 py-2 bg-white dark:bg-slate-800 border border-slate-400 dark:border-slate-600 min-h-[45px] text-left hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors disabled:cursor-not-allowed disabled:opacity-50"
+            className="p-3 bg-white dark:bg-slate-800 border border-slate-400 dark:border-slate-600 min-h-[60px] text-left hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors disabled:cursor-not-allowed disabled:opacity-50"
             disabled={!suggestions.suggestion2}
           >
             <span className="font-medium mr-2">2:</span>

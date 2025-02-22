@@ -32,6 +32,7 @@ export const MilestonesProvider = ({ children }) => {
 
     const getUserMilestone = async () => {
         try {
+            setLoading(true);
             const response = await databases.listDocuments(
                 DATABASE_ID,
                 COLLECTION_ID,
@@ -46,6 +47,8 @@ export const MilestonesProvider = ({ children }) => {
         } catch (error) {
             console.error('Error fetching milestone:', error);
             setMilestone(null);
+        } finally {
+            setLoading(false);
         }
     };
 
