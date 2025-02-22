@@ -75,7 +75,7 @@ const Navbar = () => {
               className="text-slate-700 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors flex flex-col items-center"
             >
               <Image className="w-4 h-4 mb-1" />
-              Images
+              Pictures
             </Link>
           )}
 
