@@ -2,6 +2,7 @@ import React from "react";
 import { Outlet } from "react-router-dom";
 import StoryBox from "../components/StoryBox";
 import { useAuth } from "../context/AuthContext";
+import Navbar from "../components/Navbar";
 
 function Home() {
   const { user, loading } = useAuth();
@@ -18,6 +19,8 @@ function Home() {
   }
 
   return (
+    <>
+    <Navbar />
     <div className="relative w-full p-2 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200">
       <div className="absolute top-2 right-2">
         {user ? (
@@ -35,11 +38,12 @@ function Home() {
         <div className="w-full lg:w-2/3 overflow-y-auto">
           <StoryBox />
         </div>
-        <div className="w-full lg:w-1/3 overflow-y-auto border border-slate-400 dark:border-slate-600 mt-[44px] bg-white dark:bg-slate-800 h-[494px]">
+        <div className="w-full lg:w-1/3 overflow-y-auto border border-slate-400 dark:border-slate-600 mt-[44px] bg-white dark:bg-slate-800 h-[493px]">
           <Outlet />
         </div>
       </div>
     </div>
+    </>
   );
 }
 

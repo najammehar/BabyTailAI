@@ -22,7 +22,7 @@ function App() {
           <ChaptersProvider>
             <StoryProvider>
             <ImageProvider>
-              <Navbar />
+              
               <Routes>
                 <Route path="/" element={<Home />}>
                   <Route index element={<PublicRoute><Signup /></PublicRoute>} />

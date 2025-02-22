@@ -124,7 +124,7 @@ const Chap = () => {
 
   return (
     <div className={`${!showModal && 'hidden'} p-4 custom-scrollbar`}>
-      <div className="flex justify-between items-center mb-4 px-8">
+      <div className="flex justify-between items-center mb-4 px-6"> 
       <h1 className="flex justify-center items-center text-lg font-bold font-sm mb-2 mt-4">
         <BookOpen className="text-2xl mr-2 text-slate-700 dark:text-slate-200"/>
         Chapters
@@ -155,7 +155,7 @@ const Chap = () => {
         </button>
       </div>
 
-      <form className="grid grid-cols-2 gap-x-4 gap-y-6 mx-auto w-[90%] py-6 h-[23rem] 
+      <form className="grid grid-cols-2 gap-x-4 gap-y-6 mx-auto w-[90%] py-6 h-[21rem] 
                     overflow-y-auto pr-2 custom-scrollbar">
         {initialChapOptions.map((option, index) => {
           const chapter = chapters.find(c => c.chapterNo === index + 1);
