@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ```jsx
 const { milestone } = useMilestones(); // Fetch milestone data
 
@@ -77,3 +78,6 @@ const fetchSuggestions = useCallback(async (story) => {
     console.error('Error fetching suggestions:', error);
   }
 }, [milestone]);
+=======
+
+>>>>>>> bfd8c157605bb8f4c52c2131c68ee58ca752e4c7
