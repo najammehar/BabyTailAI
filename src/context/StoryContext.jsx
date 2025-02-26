@@ -1,8 +1,8 @@
-// StoryContext.js
 import React, { createContext, useContext, useState, useCallback } from 'react';
 import { useChapters } from './ChapterContext';
 import debounce from 'lodash/debounce';
 import axios from 'axios';
+import { useMilestones } from './MilestonesContext';
 
 const StoryContext = createContext();
 
@@ -38,24 +38,39 @@ export const StoryProvider = ({ children }) => {
     [updateChapter]
   );
 
+  const { milestone } = useMilestones();
+
   const fetchSuggestions = useCallback(async (story) => {
-    if (!story?.trim()) return;
+    if (!story?.trim() || !milestone) return;
     
     // Get the last sentence or partial sentence
-    const sentences = story.trim().split(/[.!?]+\s+/);
-    let lastSentence = sentences[sentences.length - 1];
+    // const sentences = story.trim().split(/[.!?]+\s+/);
+    // let lastSentence = sentences[sentences.length - 1];
     
     // If the last sentence is too long, take only the last 30 words
-    const words = lastSentence.split(/\s+/);
-    if (words.length > 30) {
-      lastSentence = words.slice(-30).join(' ');
-    }
+    // const words = lastSentence.split(/\s+/);
+    // if (words.length > 30) {
+    //   lastSentence = words.slice(-30).join(' ');
+    // }
 
     const apiKey = import.meta.env.VITE_GROQ_API_KEY;
     if (!apiKey) {
       console.error('Groq API key is not set');
       return;
     }
+
+    const milestoneContext = `
+    Relation: ${milestone.relation}
+    Name: ${milestone.name}
+    Gender: ${milestone.sex}
+    Date of Birth: ${milestone.dateOfBirth}
+    Hometown: ${milestone.hometown}
+    Ethnicity: ${milestone.ethnicity}
+    Family Members: ${milestone.familyMembers}
+    Special Traditions: ${milestone.specialTraditions}
+    Favorite Memories: ${milestone.favoriteMemories}
+    Parent Wishes: ${milestone.parentWishes}
+  `.trim();
 
     try {
       const response = await axios.post(
@@ -65,11 +80,21 @@ export const StoryProvider = ({ children }) => {
           messages: [
             {
               role: 'system',
-              content: 'You are a focused writing assistant. Your task is to provide two alternative 5-word continuations for the given text. Each continuation should be natural, contextually appropriate, and flow smoothly from the input. Provide exactly 5 words for each suggestion, maintaining the style and tone of the original text. Format your response as two simple 5-word phrases, nothing more.',
+              content:  `
+              Based on the following context and the provided story, generate exactly two distinct time reference suggestions. 
+              Each suggestion must be 5 to 7 words long, contextually relevant, and align with the writing style and tone. 
+              Respond with only two time references separated by a newline.
+
+              CONTEXT:
+              ${milestoneContext}
+
+              STORY:
+              ${story}
+            `
             },
             {
               role: 'user',
-              content: `${lastSentence}\n\nProvide two 5-word continuations:`,
+              content: 'Provide two time reference suggestions:',
             },
           ],
           temperature: 0.7,
@@ -99,7 +124,7 @@ export const StoryProvider = ({ children }) => {
     } catch (error) {
       console.error('Error fetching suggestions:', error);
     }
-  }, []);
+  }, [milestone]);
 
   const value = {
     suggestions,
